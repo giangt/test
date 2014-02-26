@@ -1,0 +1,83 @@
+4.1 Basic Configuration
+For general configuration Grails provides two files
+grails-appconfBuildConfig.groovy
+grails-appconfConfig.groovy
+Both of them use Groovy's ConfigSlurper syntax. The first, BuildConfig.groovy, is for settings that are used when running Grails commands, such as compile, doc, etc. The second file, Config.groovy, is for settings that are used when your application is running. This means that Config.groovy is packaged with your application, but BuildConfig.groovy is not. Don't worry if you're not clear on the distinction the guide will tell you which file to put a particular setting in.
+
+The most basic syntax is similar to that of Java properties files with dot notation on the left-hand side
+
+foo.bar.hello = world
+Note that the value is a Groovy string literal! Those quotes around 'world' are important. In fact, this highlights one of the advantages of the ConfigSlurper syntax over properties files the property values can be any valid Groovy type, such as strings, integers, or arbitrary objects!
+
+Things become more interesting when you have multiple settings with the same base. For example, you could have the two settings
+
+foo.bar.hello = world
+foo.bar.good = bye
+both of which have the same base foo.bar. The above syntax works but it's quite repetitive and verbose. You can remove some of that verbosity by nesting properties at the dots
+
+foo {
+    bar {
+        hello = world
+        good = bye
+    }
+}
+or by only partially nesting them
+
+foo {
+    bar.hello = world
+    bar.good = bye
+}
+However, you can't nest after using the dot notation. In other words, this won't work
+
+ Won't work!
+foo.bar {
+    hello = world
+    good = bye
+}
+Within both BuildConfig.groovy and Config.groovy you can access several implicit variables from configuration values
+
+Variable	Description
+userHome	Location of the home directory for the account that is running the Grails application.
+grailsHome	Location of the home directory for the account that is running the Grails application.
+appName	The application name as it appears in application.properties.
+appVersion	The application version as it appears in application.properties.
+For example
+
+my.tmp.dir = ${userHome}.grailstmp
+In addition, BuildConfig.groovy has
+
+Variable	Description
+grailsVersion	The version of Grails used to build the project.
+grailsSettings	An object containing various build related settings, such as baseDir. It's of type BuildSettings.
+and Config.groovy has
+
+Variable	Description
+grailsApplication	The GrailsApplication instance.
+Those are the basics of adding settings to the configuration file, but how do you access those settings from your own application That depends on which config you want to read.
+
+The settings in BuildConfig.groovy are only available from command scripts and can be accessed via the grailsSettings.config property like so
+
+target(default Example command) {
+    def maxIterations = grailsSettings.config.myapp.iterations.max
+    …
+}
+If you want to read runtime configuration settings, i.e. those defined in Config.groovy, use the grailsApplication object, which is available as a variable in controllers and tag libraries
+
+class MyController {
+    def hello() {
+        def recipient = grailsApplication.config.foo.bar.hello
+        render Hello ${recipient}
+    }
+}
+
+and can be easily injected into services and other Grails artifacts
+
+class MyService {
+    def grailsApplication
+    String greeting() {
+        def recipient = grailsApplication.config.foo.bar.hello
+        return Hello ${recipient}
+    }
+}
+
+As you can see, when accessing configuration settings you use the same dot notation as when you define them.

@@ -1,0 +1,131 @@
+Installing STS and the Grails tools
+To begin, install the latest STS, which is freely available for download here. After installing and launching, the welcome screen will appear:
+
+
+
+From there, open the dashboard directly, or through the menus Help > Dashboard . The dashboard has an Extensions tab at the bottom:
+
+
+
+Select that tab and the full list of available STS extensions will be shown, which include Groovy and Grails support:
+
+
+
+There are two grails entries, why two? Under the 'Languages and Frameworks' section is the latest version of the Grails framework itself (Grails 1.3.5 as of STS 2.5.1). If you already have Grails installed on your machine then there is no need to grab this version as the tools can be configured to use your existing version (as we'll see later). Under the 'Language and Framework Tooling' is the 'Grails Support' entry which is the eclipse support that must be installed into STS. Groovy-Eclipse is also listed in this section.
+
+Let's assume a brand new install here so there is no local copy of Grails on the machine, select 'Grails (current production release)' from the 'Languages and Frameworks' section and 'Grails Support' from the 'Languages and Framework Tooling' section, then click install in the bottom right. Notice the Groovy tools were not selected - the Grails tools know that they pre-req the Groovy tooling and so they will be installed anyway as a required dependency. It does no harm if they are selected to be installed. (An internet connection is required to install any of these extensions).
+
+After installation, and then a restart, STS will be enabled for Groovy and Grails development.
+
+
+Versions of Groovy and Grails
+As of STS 2.5.2, Groovy-Eclipse is at version 2.1.1 and this includes Groovy 1.7.5. If the latest version of the Grails framework was installed from the extensions page, it will have been placed it in a directory alongside the STS installation. You can see the install path by opening up the grails preferences ( Window > Preferences , then select Grails in the left hand list):
+
+
+
+As shown here, Grails 1.3.6 is installed. Other versions can be added through this preferences page and one of them can be selected as the default. The default is what will be used for operations like creating a new project or plugin.
+
+There are then two main routes to getting started, either create a new Grails project or import an existing one.
+
+
+Creating a new Grails project
+To create a new Grails project, navigate to the wizard via File > New > Grails Project . If the Grails project entry doesn't appear under the New section, choose File > New > Other and find it in the list that appears. The Grails Project wizard will then appear:
+
+
+
+The project name can be entered and a version of grails selected. It will default to the version of Grails that was set as default in the installation preferences page shown earlier. The version is stored on a per-project basis.
+
+Upon clicking Finish a prompt will appear to open the Grails perspective. Like the Java perspective provides a set of views/menus/toolbars tailored to working with Java, the Grails perspective provides the same for Grails projects, so click Yes .
+
+STS will then call out to grails to run the create-app command build the project - the eclipse console view will show Grails furiously working away to create it. When complete the project will be shown in the Project Explorer in the Grails view, like this:
+
+
+
+Notice the Project Explorer is providing a view of our project that is aware of the structure of a grails project. The domain objects, controllers, views, etc are all first class entries in the project, rather than hidden in folders/subfolders. Now the project is ready for content, skip to the section below on using the Grails tools. If your Grails project was created with an older level of Grails than that being used in STS, you may need to run grails upgrade , see below for how to invoke Grails commands in STS.
+
+
+Importing an existing project
+There are actually two ways to import an existing project: Via regular importing or through the New Grails Project wizard. STS recognizes the projects for import because of the .project/.classpath files contained within them (these are eclipse metadata files). If your project is missing these files you can recreate them with the grails command grails integrate-with --eclipse - which should be run from inside your project on the command line, before trying to import.
+
+
+Importing a project
+Choose File > Import in the eclipse menus (or right click and select Import from anywhere in the package explorer).
+
+In the Import wizard that appears find 'Existing Projects into workspace':
+
+
+
+Select it and press Next.
+
+On the Import Projects page, enter the root directory for your project. This can be a directory containing a number of projects for import, or just the actual directory for a single project:
+
+
+
+Check the projects to be imported then click Finish. The project will be imported. If there is no prompt to open the Grails perspective, please open it now ( Window > Open Perspective > Grails ).
+
+If your project is using a version of Grails older than the default version setup in STS, you will be asked if you want to upgrade your project. It is recommended that you do so. If you choose not to you can run grails upgrade yourself later. Or, once imported, you could correctly define the version of grails that matches the project version and run a refresh dependencies.
+
+
+Importing via the New Grails Project Wizard
+For this, simply open the wizard through File > New > Grails Project . Then in the dialog that appears, check the 'Use external location' option and under it enter the location of your existing project. If it is recognized as an existing project the text at the top of the wizard will indicate this:
+
+
+
+Then click Finish to import it. If your Grails project was created with an older level of Grails than that being used in STS, you may need to run grails upgrade , see below for how to invoke Grails commands in STS.
+
+
+Using the Grails Tooling
+All Grails projects are also Groovy projects. So, open any Groovy file in your Grails project and you will see the Groovy support. Syntax highlighting, content assist, outline views are all available:
+
+
+
+In a Grails projects there is a need to run Grails commands, this is typically done through the command prompt. There are multiple ways to open the prompt:
+
+use the keyboard shortcut Ctrl+Alt+Shift+G (Cmd+Alt+Shift+G on Mac)
+click the grails icon in the toolbar
+use the context menu in the project explorer, navigate to Grails Tools > Open Grails Command Prompt .
+The prompt looks like this:
+
+
+The prompt supports code assist (Ctrl+Space by default) of the commands and any type references used in any commands. Use the command prompt to run 'create-domain-class', 'create-controller', etc.
+
+Content assist is available CTRL-Space (or CMD-Space on Macs):
+
+
+
+Pressing enter in the command prompt will execute the command by calling out to Grails, the command progress can be seen in the console.
+
+
+
+After Grails completes the execution of the command, the workspace will be refreshed and your new domain class (or whatever you have just created) is available for editing:
+
+
+
+The Grails tooling will manage your classpath. The classpath is refreshed automatically when the project is created or imported. However, when the Grails classpath changes, such as when plugins are added or removed, a 'Refresh Dependencies' must be run to update the classpath container. This can be done through the context menu (Under 'Grails Tools' again) or via the keyboard shortcut Alt+G,R. (Other command shortcuts for operations like quick navigation are also available through Alt+G, simply press Alt+G and look at the menu that pops up in the bottom right of eclipse):
+
+
+
+
+Running and Testing
+STS supports the launching of Grails apps. Execute the run-app command:
+
+
+
+And the console will run the app for you, providing you with a URL that you can navigate to:
+
+
+
+Similarly, for testing, executing the test-app command will execute all of your project's unit and integration tests:
+
+ 
+
+
+And there's more...
+This tutorial just covered the basics of getting started with the Grails support. Please track the New and Noteworthy release notes with each STS or watch the SpringSource blog for details of new features. This tutorial did not cover the command history or the Grails plugin manager, both of which are discussed here: SpringSource Blog article on new Grails features
+
+If you need further help, here are a useful set of links:
+
+For questions about Grails support, please visit our http://forum.springsource.org/forumdisplay.php?f=32.
+Bug reports and feature requests can be created in the STS jira: https://issuetracker.springsource.com/browse/STS
+In particular, https://issuetracker.springsource.com/browse/STS-487 is the issue for Grails enhancements and requirements.
+Questions on Groovy support in Eclipse can be sent to the mailing list.
